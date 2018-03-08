@@ -8,20 +8,21 @@ using NUnit.Framework;
 
 namespace CardGames.GameLogic
 {
-	/// <summary>
-	/// The Snap card game in which the user scores a point if they
-	/// click when the rank of the last two cards match.
-	/// </summary>
-	public class Snap
-	{
-		// Keep only the last two cards...
-		private readonly Card[] _topCards = new Card[2];
+    /// <summary>
+    /// The Snap card game in which the user scores a point if they
+    /// click when the rank of the last two cards match.
+    /// </summary>
+    public class Snap
+    {
+        // Keep only the last two cards...
+        private readonly Card[] _topCards = new Card[2];
 
-		// Have a Deck of cards to play with.
-		private readonly Deck _deck;
+        // Have a Deck of cards to play with.
+        private readonly Deck _deck;
 
-		// Use a timer to allow the game to draw cards at timed intervals
-		private readonly Timer _gameTimer;
+        // Use a timer to allow the game to draw cards at timed intervals
+        private readonly Timer _gameTimer;
+ 
 
 		// The amount of time that must pass before a card is flipped?
 		private int _flipTime = 1000;
@@ -37,6 +38,7 @@ namespace CardGames.GameLogic
 		public Snap ()
 		{
 			_deck = new Deck ();
+            _gameTimer = SwinGame.CreateTimer();
 		}
 
 		/// <summary>
@@ -92,6 +94,7 @@ namespace CardGames.GameLogic
 				_deck.Shuffle ();		// Return the cards and shuffle
 
 				FlipNextCard ();		// Flip the first card...
+                _gameTimer.Start();
 			}
 		}
 			
@@ -111,7 +114,12 @@ namespace CardGames.GameLogic
 		/// </summary>
 		public void Update()
 		{
-			//TODO: implement update to automatically slip cards!
+			if (_gameTimer.Ticks > _flipTime)
+            {
+                _gameTimer.Reset();
+                FlipNextCard();
+            }
+            //TODO: implement update to automatically slip cards!
 		}
 
 		/// <summary>
@@ -143,6 +151,7 @@ namespace CardGames.GameLogic
 
 			// stop the game...
 			_started = false;
+            _gameTimer.Stop();
 		}
 	
 		#region Snap Game Unit Tests
